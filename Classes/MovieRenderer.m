@@ -135,9 +135,11 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 		if (frameStep < 0.005)
 			frameStep	= 1.0 / 30.0;
 		
-		refHostTime			= -1.0;
+		refHostTime		= -1.0;
 		maxQueueSize	= 16;
 		_movieLock		= OS_SPINLOCK_INIT;
+		
+		[self clearFrameQueue];
 	}
 	
 	return self;
@@ -208,6 +210,8 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 		
 		maxQueueSize	= 16;
 		_movieLock		= OS_SPINLOCK_INIT;
+		
+		[self clearFrameQueue];
 	}
 	return self;
 }
@@ -228,6 +232,12 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 	
 	
 	[super dealloc];
+}
+
+
+- (BOOL)isPlayable
+{
+	return ([[qtMovie attributeForKey: QTMovieLoadStateAttribute] longValue] >= QTMovieLoadStatePlayable);
 }
 
 - (void)startPlay
@@ -257,7 +267,7 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 			[device close];    
 	}
 	
-	[self releaseFrameQueue];
+	[self clearFrameQueue];
 }
 
 - (void)idle
@@ -328,7 +338,7 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 		
 		for (ii = aSize; ii < maxQueueSize; ii++) {
 			frameQueue[ii].frameBuffer	= nil;
-			frameQueue[ii].frameTime	= 0.0;
+			frameQueue[ii].frameTime	= MAXFLOAT;
 		}
 	}
 	
@@ -435,20 +445,23 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 	if	(qtMovie || (captureSession && [captureSession isRunning])) {
 		NSInteger		ii;
 		
+		// Search the queue for the nearest half-frame
 		for (ii = 0; ii < maxQueueSize; ii++) {
-			if (aTime < frameQueue[ii].frameTime - .005) {
-				currentQueueIdx	= ii - 1;
+			if (fabs(aTime - frameQueue[ii].frameTime) < (frameStep / 2.0)) {
+				currentQueueIdx	= ii;
 				break;
 			}
 		}
 		
-		if (currentQueueIdx < 0)					// Time too back, give it the first
-			currentQueueIdx	= 0;
-		else if (currentQueueIdx == maxQueueSize)	// Time too forth, give it the last
-			currentQueueIdx	= maxQueueSize - 1;
+		if (ii == maxQueueSize) {
+			if (aTime < frameQueue[0].frameTime)			// Time too back, give it the first
+				currentQueueIdx	= 0;
+			else											// Time too forth, give it the last
+				currentQueueIdx	= maxQueueSize - 1;
+		}
 #ifdef	DEBUG
-		NSLog(@"Found frame at %ld requested %.2f found: %.2f", 
-				currentQueueIdx, aTime, frameQueue[currentQueueIdx].frameTime);
+//		NSLog(@"Found frame at %ld requested %.2f found: %.2f", 
+//				currentQueueIdx, aTime, frameQueue[currentQueueIdx].frameTime);
 #endif
 	}
 	
@@ -457,7 +470,7 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 	return (id)frameQueue[currentQueueIdx].frameBuffer;
 }
 
-- (void)releaseFrameQueue
+- (void)clearFrameQueue
 {
 	NSInteger	ii;
 	
@@ -466,7 +479,7 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 			CVBufferRelease(frameQueue[ii].frameBuffer);
 			frameQueue[ii].frameBuffer		= nil;
 		}
-		frameQueue[ii].frameTime	= 0.0;
+		frameQueue[ii].frameTime	= MAXFLOAT;
 	}
 	currentQueueIdx = 0;
 }
@@ -597,7 +610,7 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 	frameQueue[currentIdx].frameTime	= currentFrameTime;
 	
 #ifdef	DEBUG
-	NSLog(@"Add frame at realTime %.2f idx %3ld timestamp %.2f, ", realTime, currentIdx, currentFrameTime);
+//	NSLog(@"Add frame at realTime %.2f idx %3ld timestamp %.2f, ", realTime, currentIdx, currentFrameTime);
 #endif
 	
 	OSSpinLockUnlock(&_movieLock);

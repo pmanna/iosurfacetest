@@ -76,6 +76,7 @@ typedef struct _QueueItem {
 - (id)initWithDevice: (NSString *)uniqueID;
 - (id)initWithPath: (NSString *)aPath;
 
+- (BOOL)isPlayable;
 - (void)startPlay;
 - (void)stopAndReleaseMovie;
 - (void)idle;
@@ -102,6 +103,6 @@ typedef struct _QueueItem {
 #endif
 - (id)currentFrame;
 - (id)getFrameAtTime: (NSTimeInterval)aTime;
-- (void)releaseFrameQueue;
+- (void)clearFrameQueue;
 
 @end
