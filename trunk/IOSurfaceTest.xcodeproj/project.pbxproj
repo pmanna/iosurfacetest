@@ -63,28 +63,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D8B5CBD1107E47E80039A990 /* IOSurfacePlugin */;
+			remoteGlobalIDString = D8B5CBD1107E47E80039A990;
 			remoteInfo = IOSurfacePlugin;
 		};
 		D801D75B111337B0001640FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8BD5B46F10676F550003967B /* IOSurfaceCLI */;
+			remoteGlobalIDString = 8BD5B46F10676F550003967B;
 			remoteInfo = IOSurfaceCLI;
 		};
 		D801D75D111337B0001640FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D1107260486CEB800E47090 /* IOSurfaceTest */;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
 			remoteInfo = IOSurfaceTest;
 		};
 		D801D77511133A4D001640FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8BD5B46F10676F550003967B /* IOSurfaceCLI */;
+			remoteGlobalIDString = 8BD5B46F10676F550003967B;
 			remoteInfo = IOSurfaceCLI;
 		};
 /* End PBXContainerItemProxy section */
