@@ -443,22 +443,22 @@ static void frameAvailable(QTVisualContextRef vContext, const CVTimeStamp *frame
 	OSSpinLockLock(&_movieLock);
 	
 	if	(qtMovie || (captureSession && [captureSession isRunning])) {
+		NSTimeInterval	minTimeDiff	= MAXFLOAT;
+		NSTimeInterval	minTimeIdx	= 0;
 		NSInteger		ii;
 		
-		// Search the queue for the nearest half-frame
+		// Search the queue for the nearest time
+		// Done sequentially: switch to binary if too heavy?
 		for (ii = 0; ii < maxQueueSize; ii++) {
-			if (fabs(aTime - frameQueue[ii].frameTime) < (frameStep / 2.0)) {
-				currentQueueIdx	= ii;
-				break;
+			NSTimeInterval	diff	= fabs(aTime - frameQueue[ii].frameTime);
+			
+			if (diff < minTimeDiff) {
+				minTimeDiff	= diff;
+				minTimeIdx	= ii;
 			}
 		}
 		
-		if (ii == maxQueueSize) {
-			if (aTime < frameQueue[0].frameTime)			// Time too back, give it the first
-				currentQueueIdx	= 0;
-			else											// Time too forth, give it the last
-				currentQueueIdx	= maxQueueSize - 1;
-		}
+		currentQueueIdx	= minTimeIdx;
 #ifdef	DEBUG
 //		NSLog(@"Found frame at %ld requested %.2f found: %.2f", 
 //				currentQueueIdx, aTime, frameQueue[currentQueueIdx].frameTime);
