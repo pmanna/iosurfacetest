@@ -32,7 +32,7 @@
 
 #import "IOSurfaceTestView.h"
 #import <OpenGL/CGLMacro.h>
-
+#import <OpenGL/CGLIOSurface.h>
 
 @implementation IOSurfaceTestView
 
