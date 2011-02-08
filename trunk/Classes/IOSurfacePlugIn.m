@@ -219,10 +219,11 @@ static void imageBufferReleaseCallback (const void *address, void *context)
 	NSString	*cliPath	= [[NSBundle bundleForClass: [self class]] pathForResource: @"IOSurfaceCLI" ofType: @""];
 	NSArray		*args;
 	
+	// Use alpha to get back RGBA textures, otherwise default is YCbCr
 	if ([self.inputFileName length] > 1)
-		args	= [NSArray arrayWithObjects: cliPath, @"-g", self.inputFileName, nil];
+		args	= [NSArray arrayWithObjects: cliPath, @"-g", @"-a", self.inputFileName, nil];
 	else
-		args	= [NSArray arrayWithObjects: cliPath, @"-g", @"-d", nil];
+		args	= [NSArray arrayWithObjects: cliPath, @"-g", @"-a", @"-d", nil];
 
 	moviePlayer	= [[TaskWrapper alloc] initWithController: self arguments: args userInfo: nil];
 }

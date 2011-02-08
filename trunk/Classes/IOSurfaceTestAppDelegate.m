@@ -107,7 +107,7 @@
 			args		= [NSArray arrayWithObjects: cliPath, @"-g", @"-i", nil];
 		}
 		
-		if (moviePlayer	= [[TaskWrapper alloc] initWithController: self arguments: args userInfo: nil])
+		if ((moviePlayer	= [[TaskWrapper alloc] initWithController: self arguments: args userInfo: nil]) != nil)
 			[moviePlayer startProcess];
 		else
 			NSLog(@"Can't launch %@!", cliPath);
