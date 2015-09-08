@@ -1,0 +1,1 @@
+The project collects some sample code to show a limited set of capabilities of the new IOSurface framework included in Mac OS X 10.6
